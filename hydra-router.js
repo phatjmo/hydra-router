@@ -9,6 +9,7 @@ if (process.env.NEW_RELIC_LICENSE_KEY) {
 }
 
 const hydra = require('hydra');
+const fs = require('fs');
 const serviceRouter = require('./lib/servicerouter');
 
 /**
@@ -120,10 +121,12 @@ let setupHydraListeners = () => {
  * @return {object} server - http server object
  */
 let setupServer = (config, serviceInfo) => {
-  const http = require('http');
+
+  const serverOpts = config.secure ? { cert: fs.readFileSync(config.sslCert), key:  fs.readFileSync(config.sslCert) } : {};
+  const http = config.secure ? require('https') : require('http');
   let server;
   try {
-    server = http.createServer((request, response) => {
+    server = http.createServer(serverOpts, (request, response) => {
       serviceRouter.routeRequest(request, response)
         .catch((err) => {
           hydra.log('fatal', err);
