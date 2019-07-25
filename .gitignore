@@ -6,4 +6,7 @@ specs/properties.json
 config/config.json
 config/config.json-*
 .vscode/
+*.pem
+*.csr
+*.key
 
